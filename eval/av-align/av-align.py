@@ -221,12 +221,14 @@ if __name__ == "__main__":
     files = files[:10]
     score = 0
     cache_path = args.cache_path
-    if cache_path is not None and os.path.exists(cache_path):
+    if cache_path is None:
+        cache_path = args.input_video_dir.split("/")[-1] + "_cache.json"
+    if os.path.exists(cache_path):
         cache_json = json.load(open(cache_path, "r"))
     else:
         print("Cache not found, creating new cache.")
         cache_json = {}
-        cache_path = args.input_video_dir.split("/")[-1]
+        
         
     index=0
     for file in tqdm.tqdm(files, desc="Process Videos"):
@@ -271,4 +273,4 @@ if __name__ == "__main__":
     # save cache_json
     json.dump(cache_json, open(cache_path, "w"))
     print(f"Final score saved in {filename}")
-    print(f"Cache saved in {last_folder_name}")
+    print(f"Cache saved in {cache_path}")
