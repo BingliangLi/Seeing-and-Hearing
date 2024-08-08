@@ -152,7 +152,7 @@ def detect_video_peaks(frames, fps):
     
     # flow_trajectory = [compute_of(frames[0], frames[1])] + [compute_of(frames[i - 1], frames[i]) for i in range(1, len(frames))]
     flow_trajectory = [compute_of(frames[0], frames[1])]
-    for i in tqdm.tqdm(range(1, len(frames)), desc="Process Frames"):
+    for i in range(1, len(frames)):
         flow_trajectory.append(compute_of(frames[i - 1], frames[i]))
 
     video_peaks = find_local_max_indexes(flow_trajectory, fps)
