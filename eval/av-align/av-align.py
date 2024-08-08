@@ -257,7 +257,7 @@ if __name__ == "__main__":
         tmp_score=calc_intersection_over_union(audio_peaks, video_peaks, fps)
         score += tmp_score
         if index % 100 == 0:
-            print(f'index:{index}, score:{tmp_score}')
+            print(f'score:{score/(index+1)}')
             json.dump(cache_json, open(cache_path, "w"))
         index+=1
         # except Exception as e:
