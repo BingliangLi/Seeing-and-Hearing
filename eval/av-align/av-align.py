@@ -26,7 +26,7 @@ import numpy as np
 import os
 
 # cache_path = "./video_cache.json"
-cache_json = None
+# cache_json = None
 
 # resie frames
 def resize_frames(frames, new_size_scheme):
@@ -218,9 +218,10 @@ if __name__ == "__main__":
     files = [file for file in glob.glob(osp.join(args.input_video_dir, '*.mp4'))]
     score = 0
     cache_path = args.cache_path
-    if cache_json is None and osp.exists(cache_path):
+    if cache_path is not None and os.path.exists(cache_path):
         cache_json = json.load(open(cache_path, "r"))
     else:
+        print("Cache not found, creating new cache.")
         cache_json = {}
 
     index=0
