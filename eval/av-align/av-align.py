@@ -225,31 +225,44 @@ if __name__ == "__main__":
 
     index=0
     for file in tqdm.tqdm(files, desc="Process Videos"):
+        try:
+            file = file[:-4]
+            video_path = f'{file}.mp4'
+            video_name = osp.basename(video_path)[:-4]
+            audio_path = f'{args.input_wav_dir}/{video_name}.flac'
+            if not os.path.exists(audio_path):
+                print(f"The audio path '{audio_path}' not exists.")
+                continue
 
-        file = file[:-4]
-        video_path = f'{file}.mp4'
-        video_name = osp.basename(video_path)[:-4]
-        audio_path = f'{args.input_wav_dir}/{video_name}.wav'
-        if not os.path.exists(audio_path):
-            print(f"The audio path '{audio_path}' not exists.")
+            audio_peaks = detect_audio_peaks(audio_path)
+            
+            if cache_json.get(video_name, None) is None:
+                frames, fps = extract_frames(video_path, args.size)
+                flow_trajectory, video_peaks = detect_video_peaks(frames, fps)
+
+                # add to cache
+                cache_json[video_name] = {"video_peaks": video_peaks, "fps": fps}
+                json.dump(cache_json, open(cache_path, "w"))
+            else:
+                video_peaks = cache_json[video_name]["video_peaks"]
+                fps = cache_json[video_name]["fps"]
+
+            tmp_score=calc_intersection_over_union(audio_peaks, video_peaks, fps)
+            score += tmp_score
+            print(f'index:{index}, score:{tmp_score}')
+            index+=1
+        except Exception as e:
+            print(f"Error: {e}")
             continue
-
-        audio_peaks = detect_audio_peaks(audio_path)
-        
-        if cache_json.get(video_name, None) is None:
-            frames, fps = extract_frames(video_path, args.size)
-            flow_trajectory, video_peaks = detect_video_peaks(frames, fps)
-
-            # add to cache
-            cache_json[video_name] = {"video_peaks": video_peaks, "fps": fps}
-            json.dump(cache_json, open(cache_path, "w"))
-        else:
-            video_peaks = cache_json[video_name]["video_peaks"]
-            fps = cache_json[video_name]["fps"]
-
-        tmp_score=calc_intersection_over_union(audio_peaks, video_peaks, fps)
-        score += tmp_score
-        print(f'index:{index}, score:{tmp_score}')
-        index+=1
-
-    print('AV-Align: ', score/len(files))
+    final_score = score/len(files)
+    print('AV-Align: ', final_score)
+    # save final_score, with name args.input_wav_dir_final_score.json
+    last_folder_name = args.input_wav_dir.split("/")[-1]
+    filename = last_folder_name + "_{}".format(final_score) + ".json"
+    # save final_score
+    json.dump(final_score, open(filename, "w"))
+    # save cache_json
+    last_folder_name = args.input_video_dir.split("/")[-1]
+    json.dump(cache_json, open(last_folder_name, "w"))
+    print(f"Final score saved in {filename}")
+    print(f"Cache saved in {last_folder_name}")
