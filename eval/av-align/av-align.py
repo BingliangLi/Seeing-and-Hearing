@@ -216,6 +216,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     files = [file for file in glob.glob(osp.join(args.input_video_dir, '*.mp4'))]
+    # sort files
+    files.sort()
     score = 0
     cache_path = args.cache_path
     if cache_path is not None and os.path.exists(cache_path):
@@ -226,35 +228,35 @@ if __name__ == "__main__":
 
     index=0
     for file in tqdm.tqdm(files, desc="Process Videos"):
-        try:
-            file = file[:-4]
-            video_path = f'{file}.mp4'
-            video_name = osp.basename(video_path)[:-4]
-            audio_path = f'{args.input_wav_dir}/{video_name}.flac'
-            if not os.path.exists(audio_path):
-                print(f"The audio path '{audio_path}' not exists.")
-                continue
-
-            audio_peaks = detect_audio_peaks(audio_path)
-            
-            if cache_json.get(video_name, None) is None:
-                frames, fps = extract_frames(video_path, args.size)
-                flow_trajectory, video_peaks = detect_video_peaks(frames, fps)
-
-                # add to cache
-                cache_json[video_name] = {"video_peaks": video_peaks, "fps": fps}
-                json.dump(cache_json, open(cache_path, "w"))
-            else:
-                video_peaks = cache_json[video_name]["video_peaks"]
-                fps = cache_json[video_name]["fps"]
-
-            tmp_score=calc_intersection_over_union(audio_peaks, video_peaks, fps)
-            score += tmp_score
-            print(f'index:{index}, score:{tmp_score}')
-            index+=1
-        except Exception as e:
-            print(f"Error: {e}")
+        # try:
+        file = file[:-4]
+        video_path = f'{file}.mp4'
+        video_name = osp.basename(video_path)[:-4]
+        audio_path = f'{args.input_wav_dir}/{video_name}.flac'
+        if not os.path.exists(audio_path):
+            print(f"The audio path '{audio_path}' not exists.")
             continue
+
+        audio_peaks = detect_audio_peaks(audio_path)
+        
+        if cache_json.get(video_name, None) is None:
+            frames, fps = extract_frames(video_path, args.size)
+            flow_trajectory, video_peaks = detect_video_peaks(frames, fps)
+
+            # add to cache
+            cache_json[video_name] = {"video_peaks": video_peaks, "fps": fps}
+            json.dump(cache_json, open(cache_path, "w"))
+        else:
+            video_peaks = cache_json[video_name]["video_peaks"]
+            fps = cache_json[video_name]["fps"]
+
+        tmp_score=calc_intersection_over_union(audio_peaks, video_peaks, fps)
+        score += tmp_score
+        print(f'index:{index}, score:{tmp_score}')
+        index+=1
+        # except Exception as e:
+        #     print(f"Error: {e}")
+        #     continue
     final_score = score/len(files)
     print('AV-Align: ', final_score)
     # save final_score, with name args.input_wav_dir_final_score.json
