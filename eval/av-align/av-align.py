@@ -218,7 +218,7 @@ if __name__ == "__main__":
     files = [file for file in glob.glob(osp.join(args.input_video_dir, '*.mp4'))]
     # sort files
     files.sort()
-    files = files[:3000]
+    files = files[:6000]
     score = 0
     cache_path = args.cache_path
     if cache_path is None:
@@ -229,7 +229,7 @@ if __name__ == "__main__":
         print("Cache not found, creating new cache.")
         cache_json = {}
         
-        
+    result_json = {}
     index=0
     for file in tqdm.tqdm(files, desc="Process Videos"):
         # try:
@@ -256,6 +256,7 @@ if __name__ == "__main__":
 
         tmp_score=calc_intersection_over_union(audio_peaks, video_peaks, fps)
         score += tmp_score
+        result_json[video_name] = tmp_score
         if index % 100 == 0:
             print(f'score:{score/(index+1)}')
             json.dump(cache_json, open(cache_path, "w"))
@@ -272,5 +273,7 @@ if __name__ == "__main__":
     json.dump(final_score, open(filename, "w"))
     # save cache_json
     json.dump(cache_json, open(cache_path, "w"))
+    # save result_json
+    json.dump(result_json, open(last_folder_name + "_result.json", "w"))
     print(f"Final score saved in {filename}")
     print(f"Cache saved in {cache_path}")
