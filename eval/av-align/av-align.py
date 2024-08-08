@@ -218,7 +218,7 @@ if __name__ == "__main__":
     files = [file for file in glob.glob(osp.join(args.input_video_dir, '*.mp4'))]
     # sort files
     files.sort()
-    files = files[:10]
+    files = files[:3000]
     score = 0
     cache_path = args.cache_path
     if cache_path is None:
@@ -236,7 +236,7 @@ if __name__ == "__main__":
         file = file[:-4]
         video_path = f'{file}.mp4'
         video_name = osp.basename(video_path)[:-4]
-        audio_path = f'{args.input_wav_dir}/{video_name}.flac'
+        audio_path = f'{args.input_wav_dir}/{video_name}.wav'
         if not os.path.exists(audio_path):
             print(f"The audio path '{audio_path}' not exists.")
             continue
