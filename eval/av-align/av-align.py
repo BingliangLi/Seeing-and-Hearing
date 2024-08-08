@@ -226,7 +226,8 @@ if __name__ == "__main__":
     else:
         print("Cache not found, creating new cache.")
         cache_json = {}
-
+        cache_path = args.input_video_dir.split("/")[-1]
+        
     index=0
     for file in tqdm.tqdm(files, desc="Process Videos"):
         # try:
@@ -246,7 +247,7 @@ if __name__ == "__main__":
 
             # add to cache
             cache_json[video_name] = {"video_peaks": video_peaks, "fps": fps}
-            # json.dump(cache_json, open(cache_path, "w"))
+            # json.dump(cache_json, open(cache_path,  "w"))
         else:
             video_peaks = cache_json[video_name]["video_peaks"]
             fps = cache_json[video_name]["fps"]
@@ -255,6 +256,7 @@ if __name__ == "__main__":
         score += tmp_score
         if index % 10 == 0:
             print(f'index:{index}, score:{tmp_score}')
+            json.dump(cache_json, open(cache_path, "w"))
         index+=1
         # except Exception as e:
         #     print(f"Error: {e}")
@@ -267,7 +269,6 @@ if __name__ == "__main__":
     # save final_score
     json.dump(final_score, open(filename, "w"))
     # save cache_json
-    last_folder_name = args.input_video_dir.split("/")[-1]
-    json.dump(cache_json, open(last_folder_name, "w"))
+    json.dump(cache_json, open(cache_path, "w"))
     print(f"Final score saved in {filename}")
     print(f"Cache saved in {last_folder_name}")
