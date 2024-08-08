@@ -218,6 +218,7 @@ if __name__ == "__main__":
     files = [file for file in glob.glob(osp.join(args.input_video_dir, '*.mp4'))]
     # sort files
     files.sort()
+    files = files[:10]
     score = 0
     cache_path = args.cache_path
     if cache_path is not None and os.path.exists(cache_path):
@@ -245,14 +246,15 @@ if __name__ == "__main__":
 
             # add to cache
             cache_json[video_name] = {"video_peaks": video_peaks, "fps": fps}
-            json.dump(cache_json, open(cache_path, "w"))
+            # json.dump(cache_json, open(cache_path, "w"))
         else:
             video_peaks = cache_json[video_name]["video_peaks"]
             fps = cache_json[video_name]["fps"]
 
         tmp_score=calc_intersection_over_union(audio_peaks, video_peaks, fps)
         score += tmp_score
-        print(f'index:{index}, score:{tmp_score}')
+        if index % 10 == 0:
+            print(f'index:{index}, score:{tmp_score}')
         index+=1
         # except Exception as e:
         #     print(f"Error: {e}")
