@@ -213,6 +213,7 @@ if __name__ == "__main__":
     parser.add_argument("--input_wav_dir", type=str, required=True, help='Insert the videos folder path')
     parser.add_argument("--size", type=str, default=None, help="resize frames",)
     parser.add_argument("--cache_path", type=str, default=None, help="resize frames",)
+    parser.add_argument("--ext", type=str, default="flac", help="audio extension",)
     args = parser.parse_args()
 
     files = [file for file in glob.glob(osp.join(args.input_video_dir, '*.mp4'))]
@@ -237,7 +238,7 @@ if __name__ == "__main__":
             file = file[:-4]
             video_path = f'{file}.mp4'
             video_name = osp.basename(video_path)[:-4]
-            audio_path = f'{args.input_wav_dir}/{video_name}.wav'
+            audio_path = f'{args.input_wav_dir}/{video_name}.{args.ext}'
             if not os.path.exists(audio_path):
                 # print(f"The audio path '{audio_path}' not exists.")
                 continue
