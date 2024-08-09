@@ -223,8 +223,10 @@ if __name__ == "__main__":
     score = 0
     cache_path = args.cache_path
     if cache_path is None:
+        create_new_cache=False
         cache_path = args.input_video_dir.split("/")[-1] + "_cache.json"
     if os.path.exists(cache_path):
+        create_new_cache=False
         cache_json = json.load(open(cache_path, "r"))
     else:
         print("Cache not found, creating new cache.")
