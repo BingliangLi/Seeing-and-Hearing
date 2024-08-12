@@ -6,5 +6,6 @@ input_wav_dir=/workspace/data2/specvqgan_generated_test
 
 python av-align.py \
 --input_video_dir $input_video_dir \
---input_wav_dir $input_wav_dir
+--input_wav_dir $input_wav_dir \
+--ext wav
 # --cache_path $cache_path
