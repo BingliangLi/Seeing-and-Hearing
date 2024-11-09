@@ -30,8 +30,8 @@ image_types = ['.png', '.jpg', '.jpeg', '.bmp', '.gif']
 # Initialize the model and tokenizer
 # tokenizer = AutoTokenizer.from_pretrained("qwen_ckpt/Qwen-VL-Chat-Int4", trust_remote_code=True)
 # model = AutoModelForCausalLM.from_pretrained("qwen_ckpt/Qwen-VL-Chat-Int4", device_map="cuda", trust_remote_code=True, use_flash_attn=True).eval()
-tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen-VL-Chat", trust_remote_code=True)
-model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen-VL-Chat", device_map="cuda", trust_remote_code=True, use_flash_attn=True).eval()
+tokenizer = AutoTokenizer.from_pretrained("qwen_ckpt", trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained("qwen_ckpt", device_map="cuda", trust_remote_code=True, use_flash_attn=True).eval()
 
 
 # Get the list of image files in the specified directory
